@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Shopper v0.1</title>
   <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0/pure-min.css">
   <link rel="stylesheet" href="css/palette.css">
@@ -11,14 +12,17 @@
 </head>
 <body>
   <div id="shopper">
-    <header>
-      <h1 class="control-item name" id="list-title"></h1>
-      <div class="control-item name" id="list-filter"></div>
+    <header id="the-header">
+      <div class="content">
+        <h1 id="list-title">Shopper</h1>
+        <div class="hint">Start typing to add items to your shopping list</div>
+      </div>
+      <div id="list-filter"></div>
     </header>
-    <ul id="the-list"></ul>
+    <ul id="the-list">
+    </ul>
   </div>
-  <form id="editor">
-    <i class="fa fa-shopping-cart"></i>
+  <form id="editor" class="pure-form pure-form-stacked">
     <input type="text" id="editor-name" name="name" placeholder="Item name">
     <input type="number" id="editor-qty" name="quantity" min="1" value="1" step="1">
     <input type="number" id="editor-price" name="price" min="0.00" value="0.00" step="0.01">

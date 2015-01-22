@@ -25,13 +25,13 @@ var doc = $(document).ready(function () {
   edit = $('#editor')
     .find('property')
       .on('change', updateList)
-      .end();
-    .on('submit', closeItem)
+      .end()
+    .on('submit', closeItem);
 
   nameField = edit.find('input[name="name"]')
     .focus()
     .on('blur', function () {
-      if (!app.hasClass('item-opened') { nameField.focus(); }
+      if (!app.hasClass('item-opened')) { nameField.focus(); }
     });
 
   title = $('#list-title')
@@ -138,6 +138,8 @@ var doc = $(document).ready(function () {
     item.find('.name').text(data.name);
     if (data.finished === 'TRUE') { item.addClass('finished'); }
     else { item.removeClass('finished'); }
+
+    // List filtering to be added here.
   }
 
   function selectItem() {
@@ -173,7 +175,8 @@ var doc = $(document).ready(function () {
   }
 
   function clearSelection() {
-    $('.shopping-item, .control-item').removeClass('selected open incomplete');
+    $('.shopping-item, .control-item')
+      .removeClass('selected open placeholder incomplete');
   }
 
   function beginItem(item) {
@@ -210,10 +213,11 @@ var doc = $(document).ready(function () {
     var newId = '' + Math.random();
     if ($('#' + newId).length) { return shoppingItem(); } // ID should be unique
     return $(
-      '<li id="' + newID + '" class="shopping-item">' +
+      '<li id="' + newID + '"' +
+        'class="shopping-item">' +
         '<label class="name"></label>' +
-        '<button class="deleteme"></button>' +
-        '<button class="finishme"></button>' +
+        '<button class="finishme">GOT IT</button>' +
+        '<button class="deleteme">DELETE</button>' +
       '</li>');
   }
 
@@ -222,5 +226,9 @@ var doc = $(document).ready(function () {
       var prop = $(this);
       prop.val(data[prop.attr('name')] || '');
     });
+  }
+
+  function mdyDate(date) {
+    // TODO
   }
 });
