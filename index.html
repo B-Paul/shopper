@@ -2,30 +2,93 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Shopper v0.1</title>
   <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0/pure-min.css">
-  <link rel="stylesheet" href="css/palette.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="css/shopper.css">
-  <script type="text/javascript" src="//code.jquery.com/jquery-2.1.3.min.js"></script>
-  <script type="text/javascript" src="scripts/shopper.js"></script>
 </head>
-<body>
-  <div id="shopper">
-    <header id="the-header">
-      <div class="content">
-        <h1 id="list-title">Shopper</h1>
-        <div class="hint">Start typing to add items to your shopping list</div>
-      </div>
-      <div id="list-filter"></div>
-    </header>
-    <ul id="the-list">
-    </ul>
+<body class="editor-open">
+
+<header id="title-bar">
+  <div class="content">
+    <h1 id="title">SHOPPER</h1>
+    <div class="hint">type anything to add it to the shopping list</div>
   </div>
-  <form id="editor" class="pure-form pure-form-stacked">
-    <input type="text" id="editor-name" name="name" placeholder="Item name">
-    <input type="number" id="editor-qty" name="quantity" min="1" value="1" step="1">
-    <input type="number" id="editor-price" name="price" min="0.00" value="0.00" step="0.01">
-  </form>
+  <div id="item-filter" class="fa fa-search"></div>
+</header>
+<ul id="the-list">
+  <li class="list-item">
+    Banana
+    <div class="actions">
+      <button class="finisher pure-button">GOT IT</button>
+      <button class="deleter pure-button">DELETE</button>
+    </div>
+  </li>
+  <li class="list-item selected">
+    Mango
+    <div class="actions">
+      <button class="finisher pure-button">GOT IT</button>
+      <button class="deleter pure-button">DELETE</button>
+    </div>
+  </li>
+  <li class="list-item">
+    Banana
+    <div class="actions">
+      <button class="finisher pure-button">GOT IT</button>
+      <button class="deleter pure-button">DELETE</button>
+    </div>
+  </li>
+  <li class="list-item">
+    Mango
+    <div class="actions">
+      <button class="finisher pure-button">GOT IT</button>
+      <button class="deleter pure-button">DELETE</button>
+    </div>
+  </li>
+  <li class="list-item">
+    Banana
+    <div class="actions">
+      <button class="finisher pure-button">GOT IT</button>
+      <button class="deleter pure-button">DELETE</button>
+    </div>
+  </li>
+  <li class="list-item">
+    Mango
+    <div class="actions">
+      <button class="finisher pure-button">GOT IT</button>
+      <button class="deleter pure-button">DELETE</button>
+    </div>
+  </li>
+  <li class="list-item">
+    Banana
+    <div class="actions">
+      <button class="finisher pure-button">GOT IT</button>
+      <button class="deleter pure-button">DELETE</button>
+    </div>
+  </li>
+  <li class="list-item">
+    Mango
+    <div class="actions">
+      <button class="finisher pure-button">GOT IT</button>
+      <button class="deleter pure-button">DELETE</button>
+    </div>
+  </li>
+  <li class="list-item">
+    Banana
+    <div class="actions">
+      <button class="finisher pure-button">GOT IT</button>
+      <button class="deleter pure-button">DELETE</button>
+    </div>
+  </li>
+  <li class="list-item">
+    Mango
+    <div class="actions">
+      <button class="finisher pure-button">GOT IT</button>
+      <button class="deleter pure-button">DELETE</button>
+    </div>
+  </li>
+</ul>
+<form id="editor"></form>
+  
 </body>
 </html>
