@@ -1,6 +1,9 @@
 var doc = $(document).ready(function () {
   var model, app, items, edit, nameField, controls;
 
+  // Release the animations!
+  $(document.body).removeClass('preload');
+
   model = {
     'list-title': {
       'name': 'Untitled Shopping List ' + mdyDate(new Date())
