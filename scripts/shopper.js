@@ -1,12 +1,14 @@
 var doc = $(document).ready(function () {
   'use strict';
 
-  var bod, model, theList, nameField, editor;
+  var bod, model, theList, nameField, quantityField, priceField, editor;
 
   bod = $(document.body).removeClass('preload'); // Now transitions may happen
   model = {};
   theList = $('#the-list');
   nameField = $('#input-name');
+  quantityField = $('#input-quantity');
+  priceField = $('#input-price');
   editor = $('#editor');
 
   doc
@@ -16,35 +18,44 @@ var doc = $(document).ready(function () {
       switch (event.keyCode) {
 
       case 13: // ENTER
+        if (!item.length) { return false; }
         if (!item.hasClass('incomplete')) {
-          bod.addClass('item-opened');
-          return;
+          bod.addClass('editor-open');
+          item.addClass('incomplete');
+          return false;
+        }
+        if (bod.hasClass('editor-open')) {
+          bod.removeClass('editor-open');
         }
         item.removeClass('selected incomplete');
         nameField.val('');
         return false;
 
-      case 27: // ESCAPE
+      case 27: // ESC
         if (item.hasClass('incomplete')) { removeItem(item); }
-        else { item.removeClass('selected incomplete'); }
-        nameField.val('');
+        deselect();
         return false;
 
       case 38: // UP
-        item = item.removeClass('selected incomplete').prev();
-        selectItem(item.length ? item : theList.find('.list-item').last());
+        item = item.prev();
+        item = item.length ? item : theList.find('.list-item').last();
+        selectItem(item);
+        bod.hasClass('editor-open') && item.addClass('incomplete');
         return false;
 
       case 40: // DOWN
-        item = item.removeClass('selected incomplete').next();
-        selectItem(item.length ? item : theList.find('.list-item').first());
+        item = item.next();
+        item = item.length ? item : theList.find('.list-item').first();
+        selectItem(item);
+        bod.hasClass('editor-open') && item.addClass('incomplete');
         return false;
 
       case 8: // BACKSPACE
       case 46: // DELETE
-        if (item.hasClass('incomplete')) { return; }
-        item.length && removeItem(item);
-        return false;
+        return item.hasClass('incomplete')
+          || bod.hasClass('editor-open')
+          || bod.hasClass('filter-open')
+          || (item.length && removeItem(item) && false);
 
       }
     })
@@ -61,8 +72,8 @@ var doc = $(document).ready(function () {
         item.addClass('incomplete');
       }
 
-      bod.hasClass('editor-opened')
-        || bod.hasClass('filter-opened')
+      bod.hasClass('editor-open')
+        || bod.hasClass('filter-open')
         || nameField.focus();
     })
     .on('keyup', function () {
@@ -75,6 +86,8 @@ var doc = $(document).ready(function () {
       data = model[selectedId]
       data.name = nameField.val();
       if (!data.name.length) { removeItem(selectedItem); }
+      data.quantity = quantityField.val();
+      data.price = priceField.val();
 
       selectedItem.find('.name').text(data.name);
       if (data.quantity > 1) {} // badge the item
@@ -84,13 +97,21 @@ var doc = $(document).ready(function () {
     var item = model[jq.attr('id')];
 
     if (!jq.hasClass('list-item')) { return; }
+    deselect(theList.find('.list-item').not(jq), true);
+
     editor.find('input').each(function () {
       var $this = $(this);
       $this.val(item[$this.attr('name')]);
     });
 
-    theList.find('.list-item').removeClass('selected');
     return jq.addClass('selected');
+  }
+
+  function deselect(jq, keepEditor) {
+    jq = jq && jq.length ? jq : theList.find('.list-item');
+    jq.removeClass('selected incomplete');
+    keepEditor || bod.removeClass('editor-open');
+    editor.get(0).reset();
   }
 
   function removeItem(jq) {
@@ -105,7 +126,6 @@ var doc = $(document).ready(function () {
       quantity: '1',
       price: '0.00'
     }
-    console.log(model);
     return $(
       '<li class="list-item incomplete" id="' + newId + '">' +
         '<span class="name"></span>' +
