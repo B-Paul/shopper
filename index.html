@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Shopper v0.1</title>
   <link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0/pure-min.css">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:700">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="css/shopper.css">
 </head>
@@ -16,79 +17,119 @@
   </div>
   <div id="item-filter" class="fa fa-search"></div>
 </header>
+<label for="instruct-toggle">?</label>
+<input type="checkbox" id="instruct-toggle">
+<div id="instructions">
+  <table>
+    <caption>SHOPPER keyboard shortcuts</caption>
+    <tbody>
+      <tr>
+        <td>UP/DOWN</td>
+        <td>Select list items</td>
+      </tr>
+      <tr>
+        <td>ESC</td>
+        <td>Select none (ready to insert new entries)</td>
+      </tr>
+      <tr>
+        <td>-</td>
+        <td>Mark/unmark item finished</td>
+      </tr>
+      <tr>
+        <td>/</td>
+        <td>Activate search</td>
+      </tr>
+      <tr>
+        <td>BACKSPACE/DELETE</td>
+        <td>Delete item</td>
+      </tr>
+      <tr>
+        <td>ENTER</td>
+        <td>Open or close detailed editor</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 <ul id="the-list">
   <li class="list-item">
-    Banana
+    Mofn
     <div class="actions">
       <button class="finisher pure-button">GOT IT</button>
       <button class="deleter pure-button">DELETE</button>
     </div>
   </li>
   <li class="list-item selected">
-    Mango
+    Onyon reng
     <div class="actions">
       <button class="finisher pure-button">GOT IT</button>
       <button class="deleter pure-button">DELETE</button>
     </div>
   </li>
   <li class="list-item">
-    Banana
+    Blanabba
+    <div class="actions">
+      <button class="finisher pure-button">GOT IT</button>
+      <button class="deleter pure-button">DELETE</button>
+    </div>
+  </li>
+  <li class="list-item finished">
+    Mershed Perderder
     <div class="actions">
       <button class="finisher pure-button">GOT IT</button>
       <button class="deleter pure-button">DELETE</button>
     </div>
   </li>
   <li class="list-item">
-    Mango
+    Gurps
     <div class="actions">
       <button class="finisher pure-button">GOT IT</button>
       <button class="deleter pure-button">DELETE</button>
     </div>
   </li>
   <li class="list-item">
-    Banana
+    Mogno
     <div class="actions">
       <button class="finisher pure-button">GOT IT</button>
       <button class="deleter pure-button">DELETE</button>
     </div>
   </li>
   <li class="list-item">
-    Mango
+    Peesh
     <div class="actions">
       <button class="finisher pure-button">GOT IT</button>
       <button class="deleter pure-button">DELETE</button>
     </div>
   </li>
   <li class="list-item">
-    Banana
-    <div class="actions">
-      <button class="finisher pure-button">GOT IT</button>
-      <button class="deleter pure-button">DELETE</button>
-    </div>
-  </li>
-  <li class="list-item">
-    Mango
-    <div class="actions">
-      <button class="finisher pure-button">GOT IT</button>
-      <button class="deleter pure-button">DELETE</button>
-    </div>
-  </li>
-  <li class="list-item">
-    Banana
-    <div class="actions">
-      <button class="finisher pure-button">GOT IT</button>
-      <button class="deleter pure-button">DELETE</button>
-    </div>
-  </li>
-  <li class="list-item">
-    Mango
+    Shramp
     <div class="actions">
       <button class="finisher pure-button">GOT IT</button>
       <button class="deleter pure-button">DELETE</button>
     </div>
   </li>
 </ul>
-<form id="editor"></form>
+<form id="editor" class="pure-form pure-form-aligned">
+  <fieldset class="fields">
+    <div class="pure-control-group">
+      <label for="name-input">Name</label>
+      <input type="text" name="name" id="name-input">
+    </div>
+    <div class="pure-control-group">
+      <label for="quantity-input">Quantity</label>
+      <input type="text" name="quantity" id="quantity-input">
+    </div>
+    <div class="pure-control-group">
+      <label for="price-input">Price</label>
+      <input type="text" name="price" id="price-input">
+    </div>
+  </fieldset>
+  <fieldset class="buttons">
+    <button class="finisher pure-button">GOT IT</button>
+    <button class="deleter pure-button">DELETE</button>
+    <button class="closer pure-button">CLOSE</button>
+  </fieldset>
+</form>
+</div>
   
 </body>
 </html>
