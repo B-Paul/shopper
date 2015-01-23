@@ -7,8 +7,10 @@
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:700">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="css/shopper.css">
+  <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+  <script src="scripts/shopper.js"></script>
 </head>
-<body class="editor-open preload">
+<body class="preload">
 
 <header id="title-bar">
   <div class="content">
@@ -51,76 +53,20 @@
   </table>
 </div>
 <ul id="the-list">
-  <li class="list-item">
-    Mofn
-    <div class="actions">
-      <button class="finisher pure-button">GOT IT</button>
-      <button class="deleter pure-button">DELETE</button>
-    </div>
-  </li>
-  <li class="list-item selected">
-    Onyon reng
-    <div class="actions">
-      <button class="finisher pure-button">GOT IT</button>
-      <button class="deleter pure-button">DELETE</button>
-    </div>
-  </li>
-  <li class="list-item">
-    Blanabba
-    <div class="actions">
-      <button class="finisher pure-button">GOT IT</button>
-      <button class="deleter pure-button">DELETE</button>
-    </div>
-  </li>
-  <li class="list-item finished">
-    Mershed Perderder
-    <div class="actions">
-      <button class="finisher pure-button">GOT IT</button>
-      <button class="deleter pure-button">DELETE</button>
-    </div>
-  </li>
-  <li class="list-item">
-    Gurps
-    <div class="actions">
-      <button class="finisher pure-button">GOT IT</button>
-      <button class="deleter pure-button">DELETE</button>
-    </div>
-  </li>
-  <li class="list-item">
-    Mogno
-    <div class="actions">
-      <button class="finisher pure-button">GOT IT</button>
-      <button class="deleter pure-button">DELETE</button>
-    </div>
-  </li>
-  <li class="list-item">
-    Peesh
-    <div class="actions">
-      <button class="finisher pure-button">GOT IT</button>
-      <button class="deleter pure-button">DELETE</button>
-    </div>
-  </li>
-  <li class="list-item">
-    Shramp
-    <div class="actions">
-      <button class="finisher pure-button">GOT IT</button>
-      <button class="deleter pure-button">DELETE</button>
-    </div>
-  </li>
 </ul>
 <form id="editor" class="pure-form pure-form-aligned">
   <fieldset class="fields">
     <div class="pure-control-group">
-      <label for="name-input">Name</label>
-      <input type="text" name="name" id="name-input">
+      <label for="input-name">Name</label>
+      <input type="text" name="name" id="input-name">
     </div>
     <div class="pure-control-group">
-      <label for="quantity-input">Quantity</label>
-      <input type="text" name="quantity" id="quantity-input">
+      <label for="input-quantity">Quantity</label>
+      <input type="text" name="quantity" id="input-quantity">
     </div>
     <div class="pure-control-group">
-      <label for="price-input">Price</label>
-      <input type="text" name="price" id="price-input">
+      <label for="input-price">Price</label>
+      <input type="text" name="price" id="input-price">
     </div>
   </fieldset>
   <fieldset class="buttons">

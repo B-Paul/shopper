@@ -5,7 +5,7 @@ body {
   font-family: Lato, Tahoma, sans-serif;;
 }
 
-body.preload * {
+.preload, .preload * {
   transition: none !important;
 }
 
@@ -98,12 +98,14 @@ label[for="instruct-toggle"] {
 }
 
 #the-list {
+  position: absolute;
+  top: 0;
   width: 100%;
   margin: 0;
   padding: 6em 0 0 0;
   list-style: none;
   background: white;
-  transition: padding-top .4s ease;
+  transition: padding-top .4s .4s ease;
 }
 
 .list-item {
@@ -149,7 +151,22 @@ label[for="instruct-toggle"] {
   color: @gray-1;
 }
 
-.list-item.selected>.actions {
+.list-item.selected {
+  padding-left: 2em;
+}
+.list-item.selected::before {
+  content: '';
+  width: 3em;
+  height: 3em;
+  transform: rotate(45deg);
+  position: absolute;
+  left: -2.25em;
+  top: -.25em;
+  background: @color-primary-0;
+  z-index: 1;
+}
+
+.list-item.selected:not(.incomplete)>.actions {
   background: rgba(0, 0, 0, .26);
 
   .pure-button {
@@ -172,13 +189,12 @@ label[for="instruct-toggle"] {
   height: 9em;
   width: 100%;
   text-align: center;
-  padding-top: 7em;
+  padding-top: 5.5em;
   position: fixed;
-  top: 0;
   left: -100%;
   background: white;
   border-bottom: 1px solid @gray-2;
-  transition: left .4s .4s ease;
+  transition: left .4s ease;
 
   fieldset {
     display: inline-block;
@@ -199,8 +215,10 @@ label[for="instruct-toggle"] {
 body.editor-open #editor {
   display: block;
   left: 0;
+  transition-delay: .4s;
 }
 
 body.editor-open #the-list {
   padding-top: 16em;
+  transition-delay: 0;
 }

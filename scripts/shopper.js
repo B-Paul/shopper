@@ -1,237 +1,118 @@
 var doc = $(document).ready(function () {
-  var model, app, items, edit, nameField, controls;
+  'use strict';
 
-  // Release the animations!
-  $(document.body).removeClass('preload');
+  var bod, model, theList, nameField, editor;
 
-  model = {
-    'list-title': {
-      'name': 'Untitled Shopping List ' + mdyDate(new Date())
-    },
-    'list-filter': {
-      'name': ''
-    }
-  };
+  bod = $(document.body).removeClass('preload'); // Now transitions may happen
+  model = {};
+  theList = $('#the-list');
+  nameField = $('#input-name');
+  editor = $('#editor');
 
   doc
-    .on('keydown', captureInput)
-    .on('keyup', updateList);
+    .on('keydown', function (event) {
+      var item = theList.find('.selected').first();
 
-  app = $('#shopper');
+      switch (event.keyCode) {
 
-  items = $('#the-list')
-    .on('click', 'li', selectItem)
-    .on('dblclick', 'li', openItem)
-    .on('click', '.deleteme', deleteItem)
-    .on('click', '.finishme', toggleItemFinished);
+      case 13: // ENTER
+        if (!item.hasClass('incomplete')) {
+          bod.addClass('item-opened');
+          return;
+        }
+        item.removeClass('selected incomplete');
+        nameField.val('');
+        return false;
 
-  edit = $('#editor')
-    .find('property')
-      .on('change', updateList)
-      .end()
-    .on('submit', closeItem);
+      case 27: // ESCAPE
+        if (item.hasClass('incomplete')) { removeItem(item); }
+        else { item.removeClass('selected incomplete'); }
+        nameField.val('');
+        return false;
 
-  nameField = edit.find('input[name="name"]')
-    .focus()
-    .on('blur', function () {
-      if (!app.hasClass('item-opened')) { nameField.focus(); }
+      case 38: // UP
+        item = item.removeClass('selected incomplete').prev();
+        selectItem(item.length ? item : theList.find('.list-item').last());
+        return false;
+
+      case 40: // DOWN
+        item = item.removeClass('selected incomplete').next();
+        selectItem(item.length ? item : theList.find('.list-item').first());
+        return false;
+
+      case 8: // BACKSPACE
+      case 46: // DELETE
+        if (item.hasClass('incomplete')) { return; }
+        item.length && removeItem(item);
+        return false;
+
+      }
+    })
+    .on('keypress', function () {
+      var item = theList.find('.selected').first();
+
+      if (!item.length) {
+        item = listItem().appendTo(theList);
+        selectItem(item);
+      }
+
+      if (!item.hasClass('incomplete')) {
+        nameField.val('');
+        item.addClass('incomplete');
+      }
+
+      bod.hasClass('editor-opened')
+        || bod.hasClass('filter-opened')
+        || nameField.focus();
+    })
+    .on('keyup', function () {
+      var selectedItem, selectedId, data;
+
+      selectedItem = theList.find('.selected').first();
+      if (!selectedItem.length) { return; }
+      selectedId = selectedItem.attr('id');
+
+      data = model[selectedId]
+      data.name = nameField.val();
+      if (!data.name.length) { removeItem(selectedItem); }
+
+      selectedItem.find('.name').text(data.name);
+      if (data.quantity > 1) {} // badge the item
     });
 
-  title = $('#list-title')
-    .on('click', selectItem);
+  function selectItem(jq) {
+    var item = model[jq.attr('id')];
 
-  filter = $('#list-filter')
-    .on('click', selectItem);
-
-  function captureInput(event) {
-    var item = items.find('.selected').first();
-
-    // If the current item is "open", keyboard control should navigate through
-    // the form as expected---no special commands.
-    if (app.hasClass('item-opened')) { return; }
-
-    // recognize navigation commands
-    switch (event.keyCode) {
-
-    case 13:
-      // ENTER
-      if (item.hasClass('incomplete')) { selectNextFrom(item); }
-      else { openItem.apply(item); }
-      return false;
-
-    case 27:
-      // ESCAPE
-      clearSelection();
-      return false;
-
-    case 189:
-      // - (HYPHEN)
-      item.length && toggleItemFinished.apply(item);
-      return false;
-
-    case 222:
-      // ' (SINGLE QUOTE)
-      selectItem(title);
-      return false;
-
-    case 191:
-      // / (SLASH)
-      selectItem(filter);
-      return false;
-
-    case 8:
-    case 46:
-      // BACKSPACE, DELETE
-      item.length && deleteItem.apply(item);
-      return false;
-
-    case 37:
-      // LEFT
-      selectLeftFrom(item);
-      return false;
-
-    case 38:
-      // UP
-      selectUpFrom(item);
-      return false;
-
-    case 39:
-      // RIGHT
-      selectRightFrom(item);
-      return false;
-
-    case 40:
-      // DOWN
-      selectDownFrom(item);
-      return false;
-
-    default:
-      break;
-
-    }
-
-    // focus the selected item if possible
-    if (item.length) {
-      if (!item.hasClass('incomplete')) { beginItem(item); }
-      return;
-    }
-
-    // if nothing selected, create a new item and focus that
-    item = shoppingItem();
-    model[item.attr('id')] = {
-      'name': '',
-      'quantity': '1',
-      'price': '0.00'
-    };
-    beginItem(item);
-    items.append(item);
-  }
-
-  function updateList() {
-    var item, data;
-    item = items.find('.selected').first();
-    data = {};
-    edit.find('.property').each(function () {
-      var prop = $(this);
-      data[prop.attr('name')] = prop.val();
+    if (!jq.hasClass('list-item')) { return; }
+    editor.find('input').each(function () {
+      var $this = $(this);
+      $this.val(item[$this.attr('name')]);
     });
-    model[item.attr('id')] = data;
 
-    // Populate the item with the collected data.
-    item.find('.name').text(data.name);
-    if (data.finished === 'TRUE') { item.addClass('finished'); }
-    else { item.removeClass('finished'); }
-
-    // List filtering to be added here.
+    theList.find('.list-item').removeClass('selected');
+    return jq.addClass('selected');
   }
 
-  function selectItem() {
-    var item, selectedId;
-    item = $(this);
-    selectedId = item.attr('id');
-    if (selectedId in model) {
-      clearSelection();
-      item.addClass('selected');
-      populateForm(model[selectedId]);
-      nameField.focus();
-    }
+  function removeItem(jq) {
+    delete model[jq.remove().attr('id')];
   }
 
-  function openItem() {
-    var item = $(this);
-    if (!this.hasClass('shopping-item')) { return; }
-    selectItem.apply($(this));
-    app.addClass('item-opened');
-  }
-
-  function closeItem() {
-    selectItem.apply($(this));
-    app.removeClass('item-opened');
-  }
-
-  function toggleItemFinished() {
-    $(this).toggleClass('finished');
-  }
-
-  function deleteItem() {
-    $(this).remove();
-  }
-
-  function clearSelection() {
-    $('.shopping-item, .control-item')
-      .removeClass('selected open placeholder incomplete');
-  }
-
-  function beginItem(item) {
-    selectItem.apply(item);
-    nameField.val('');
-    item.addClass('incomplete');
-    return item;
-  }
-
-  function selectUpFrom(item) {
-    item = item.prev();
-    if (!item.length) { clearSelection(); }
-    else { selectItem.apply(item); }
-  }
-
-  function selectDownFrom(item) {
-    item = item.next();
-    if (!item.length) { clearSelection(); }
-    else { selectItem.apply(item); }
-  }
-
-  function selectLeftFrom(item) {
-    // TODO
-  }
-
-  function selectRightFrom(item) {
-    // TODO
-  }
-
-  // TODO: Change this when grid navigation is implemented
-  var selectNextFrom = selectDownFrom; // alias.
-
-  function shoppingItem() {
+  function listItem() {
     var newId = '' + Math.random();
-    if ($('#' + newId).length) { return shoppingItem(); } // ID should be unique
+    if ((newId in model) || $(newId).length) { return listItem(); }
+    model[newId] = {
+      name: '',
+      quantity: '1',
+      price: '0.00'
+    }
+    console.log(model);
     return $(
-      '<li id="' + newID + '"' +
-        'class="shopping-item">' +
-        '<label class="name"></label>' +
-        '<button class="finishme">GOT IT</button>' +
-        '<button class="deleteme">DELETE</button>' +
+      '<li class="list-item incomplete" id="' + newId + '">' +
+        '<span class="name"></span>' +
+        '<div class="actions">' +
+          '<button class="finisher pure-button">GOT IT</button>' +
+          '<button class="deleter pure-button">DELETE</button>' +
+        '</div>' +
       '</li>');
-  }
-
-  function populateForm(data) {
-    edit.find('.property').each(function () {
-      var prop = $(this);
-      prop.val(data[prop.attr('name')] || '');
-    });
-  }
-
-  function mdyDate(date) {
-    // TODO
   }
 });
