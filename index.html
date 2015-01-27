@@ -17,9 +17,10 @@
     <h1 id="title">SHOPPER</h1>
     <div class="hint">type anything to add it to the shopping list</div>
   </div>
-  <div id="item-filter" class="fa fa-search"></div>
 </header>
-<label for="instruct-toggle">?</label>
+<label for="input-filter" class="top-help filter-help fa fa-search"></label>
+<input id="input-filter">
+<label for="instruct-toggle" class="top-help instruct-help">?</label>
 <input type="checkbox" id="instruct-toggle">
 <div id="instructions">
   <table>
@@ -54,19 +55,19 @@
 </div>
 <ul id="the-list">
 </ul>
-<form id="editor" class="pure-form pure-form-aligned">
+<form id="editor" class="pure-form pure-form-aligned" autocomplete="off">
   <fieldset class="fields">
     <div class="pure-control-group">
       <label for="input-name">Name</label>
-      <input type="text" name="name" id="input-name">
+      <input type="text" name="name" id="input-name" >
     </div>
     <div class="pure-control-group">
       <label for="input-quantity">Quantity</label>
-      <input type="text" name="quantity" id="input-quantity">
+      <input type="number" name="quantity" id="input-quantity" step="1" min="1" value="1">
     </div>
     <div class="pure-control-group">
       <label for="input-price">Price</label>
-      <input type="text" name="price" id="input-price">
+      <input type="number" name="price" id="input-price" step="0.01" min="0.00" value="0.00">
     </div>
   </fieldset>
   <fieldset class="buttons">

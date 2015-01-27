@@ -39,9 +39,17 @@ body {
   opacity: .26;
 }
 
-#item-filter {
+.top-help {
+  position: fixed;
   font-size: 1.5em;
   margin: .5em;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.instruct-help {
+  top: 1.5em;
+  left: .25em;
 }
 
 #instructions {
@@ -80,15 +88,6 @@ body {
       border-bottom: 1px solid @gray-1;
     }
   }
-}
-
-label[for="instruct-toggle"] {
-  #item-filter;
-  position: fixed;
-  top: 1.5em;
-  left: .25em;
-  z-index: 2;
-  cursor: pointer;
 }
 
 #instruct-toggle:checked ~ #instructions {
@@ -154,6 +153,7 @@ label[for="instruct-toggle"] {
 .list-item.selected {
   padding-left: 2em;
 }
+
 .list-item.selected::before {
   content: '';
   width: 3em;

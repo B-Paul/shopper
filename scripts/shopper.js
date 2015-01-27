@@ -1,135 +1,237 @@
-var doc = $(document).ready(function () {
+$(document).ready(function () {
   'use strict';
 
-  var bod, model, theList, nameField, quantityField, priceField, editor;
+  var bod, mode, entries, cursor, theList, fields, filterButton, hint;
 
-  bod = $(document.body).removeClass('preload'); // Now transitions may happen
-  model = {};
+  bod = $(document.body);
+  mode = 'ready';
+    // possible modes: 'ready', 'typing', 'selecting', 'editing', 'filtering'
+  entries = {};
+  cursor = 0;
   theList = $('#the-list');
-  nameField = $('#input-name');
-  quantityField = $('#input-quantity');
-  priceField = $('#input-price');
-  editor = $('#editor');
+  fields = {
+    name: $('#input-name'),
+    quantity: $('#input-quantity'),
+    price: $('#input-price'),
+    filter: $('#input-filter')
+  };
+  filterButton = $('.filter-help');
+  hint = $('.hint');
 
-  doc
+  moveTo(0);
+  refreshView();
+
+  bod.removeClass('preload') // Now transitions may happen
+    // No submitting anything from this page
+    .on('submit', function () {
+      return false;
+    })
+    // Let the user click out of the instructions
+    .on('click', '#instructions:not("#instructions *")', function () {
+      $('#instruct-toggle').prop('checked', false);
+    })
+    .on('click', '.list-item', function () {
+      moveTo($(this).index());
+      refreshView();
+      return false;
+    })
+    .on('click', '#the-list', function () {
+      moveTo($(this).children('.list-item').length);
+      refreshView();
+      return false;
+    })
+    .on('dblclick', '.list-item', function () {
+      mode = 'editing';
+      refreshView();
+      return false;
+    })
+    .on('click', '.adder', function () {
+      mode = 'selecting';
+      move(1);
+      refreshView();
+      return false;
+    })
+    .on('click', '.deleter', function () {
+      removeItem($('.list-item.selected'));
+      refreshView();
+      return false;
+    })
+    .on('click', '.finisher', function () {
+      $('.list-item.selected').toggleClass('finished');
+      refreshView();
+      return false;
+    })
+    .on('click', '.filter-help', function () {
+      mode = 'filtering';
+      refreshView();
+      return false;
+    })
+    // Capture keyboard commands
     .on('keydown', function (event) {
-      var item = theList.find('.selected').first();
-
       switch (event.keyCode) {
 
       case 13: // ENTER
-        if (!item.length) { return false; }
-        if (!item.hasClass('incomplete')) {
-          bod.addClass('editor-open');
-          item.addClass('incomplete');
-          return false;
+        if (mode === 'editing' || mode === 'typing') {
+          mode = 'selecting';
+          move(1);
+        } else {
+          mode = 'editing';
         }
-        if (bod.hasClass('editor-open')) {
-          bod.removeClass('editor-open');
-        }
-        item.removeClass('selected incomplete');
-        nameField.val('');
-        return false;
+        break;
 
       case 27: // ESC
-        if (item.hasClass('incomplete')) { removeItem(item); }
-        deselect();
-        return false;
+        revert();
+        moveTo(theList.children('.list-item').length);
+        break;
 
       case 38: // UP
-        item = item.prev();
-        item = item.length ? item : theList.find('.list-item').last();
-        selectItem(item);
-        bod.hasClass('editor-open') && item.addClass('incomplete');
-        return false;
+        move(-1);
+        break;
 
       case 40: // DOWN
-        item = item.next();
-        item = item.length ? item : theList.find('.list-item').first();
-        selectItem(item);
-        bod.hasClass('editor-open') && item.addClass('incomplete');
-        return false;
+        move(1);
+        break;
 
       case 8: // BACKSPACE
       case 46: // DELETE
-        return item.hasClass('incomplete')
-          || bod.hasClass('editor-open')
-          || bod.hasClass('filter-open')
-          || (item.length && removeItem(item) && false);
+        if (mode !== 'selecting') { return; }
+        removeItem($('.list-item.selected'));
+        break;
+
+      case 189: // - (HYPHEN)
+        if (mode !== 'selecting') { return; }
+        $('.list-item.selected').toggleClass('finished');
+        break;
+
+      case 191: // / (SLASH)
+        if (mode !== 'selecting') { return; }
+        mode = 'filtering';
+        break;
+
+      default:
+        return true; // If key pressed was a printable character, keypress
+        // handler will take over from this point. 
 
       }
+
+      refreshView();
+      return false;
     })
     .on('keypress', function () {
-      var item = theList.find('.selected').first();
-
-      if (!item.length) {
-        item = listItem().appendTo(theList);
-        selectItem(item);
+      if (mode !== 'editing' && mode !=='typing') {
+        fields.name.val('');
+        mode = 'typing';
+        refreshView();
       }
-
-      if (!item.hasClass('incomplete')) {
-        nameField.val('');
-        item.addClass('incomplete');
-      }
-
-      bod.hasClass('editor-open')
-        || bod.hasClass('filter-open')
-        || nameField.focus();
     })
     .on('keyup', function () {
-      var selectedItem, selectedId, data;
-
-      selectedItem = theList.find('.selected').first();
-      if (!selectedItem.length) { return; }
-      selectedId = selectedItem.attr('id');
-
-      data = model[selectedId]
-      data.name = nameField.val();
-      if (!data.name.length) { removeItem(selectedItem); }
-      data.quantity = quantityField.val();
-      data.price = priceField.val();
-
-      selectedItem.find('.name').text(data.name);
-      if (data.quantity > 1) {} // badge the item
+      var item = theList.children('.list-item').eq(cursor);
+      item.find('.name').text(fields.name.val());
+      filterButton.text(fields.filter.val());
     });
 
-  function selectItem(jq) {
-    var item = model[jq.attr('id')];
-
-    if (!jq.hasClass('list-item')) { return; }
-    deselect(theList.find('.list-item').not(jq), true);
-
-    editor.find('input').each(function () {
-      var $this = $(this);
-      $this.val(item[$this.attr('name')]);
-    });
-
-    return jq.addClass('selected');
+  function move(direction) { // Positive is down, negative is up.
+    return moveTo(cursor + (direction / Math.abs(direction)));
   }
 
-  function deselect(jq, keepEditor) {
-    jq = jq && jq.length ? jq : theList.find('.list-item');
-    jq.removeClass('selected incomplete');
-    keepEditor || bod.removeClass('editor-open');
-    editor.get(0).reset();
+  function moveTo(index) {
+    var items, item;
+    items = theList.children('.list-item');
+    item = items.eq(cursor);
+
+    item.length && commit(item.attr('id'));
+    cursor = Math.min(items.length, Math.max(index, 0));
+    item = items.eq(cursor);
+    mode = item.length ? 'selecting' : 'ready';
+    item = item.length ? item : listItem().appendTo(theList);
+    revert(item.attr('id'));
+  }
+
+  function commit(id) {
+    var data;
+    id = id || $('.list-item.selected').attr('id');
+    data = entries[id];
+    Object.keys(fields).forEach(function (k) {
+      data[k] = fields[k].val();
+    });
+  }
+
+  function revert(id) {
+    var data;
+    id = id || $('.list-item.selected').attr('id');
+    data = entries[id];
+    Object.keys(fields).forEach(function (k) {
+      fields[k].val(data[k]);
+    });
   }
 
   function removeItem(jq) {
-    delete model[jq.remove().attr('id')];
+    delete entries[jq.remove().attr('id')];
+    moveTo(Math.min(cursor, $('.list-item').length - 1));
+  }
+
+  function refreshView() {
+    var items, item;
+    items = theList.children('.list-item');
+    item = items.removeClass('selected incomplete')
+      .eq(cursor)
+        .addClass('selected');
+
+    bod.removeClass('editor-open');
+
+    switch (mode) {
+
+    case 'filtering':
+      fields.filter.focus();
+      hint.text('type a search string to filter your shopping list');
+      break;
+
+    case 'editing':
+      bod.addClass('editor-open');
+      hint.text('');
+      break;
+
+    case 'selecting':
+      hint.text('press enter on an item to edit additional details');
+      break;
+
+    case 'ready':
+      item.addClass('incomplete');
+      hint.text('type anything to add it to your list');
+      break;
+
+    case 'typing':
+      item.addClass('incomplete');
+      fields.name.focus();
+      hint.text('press enter to go to the next item, or esc to cancel');
+      break;
+
+    }
+
+    items
+      .not('.incomplete')
+      .filter(function () {
+        var elem = $(this);
+        return !(
+          elem.attr('id') in entries && elem.find('.name').text().trim());
+      })
+      .remove();
   }
 
   function listItem() {
-    var newId = '' + Math.random();
-    if ((newId in model) || $(newId).length) { return listItem(); }
-    model[newId] = {
+    var newId = ('' + Math.random()).replace('0.', '');
+    if ((newId in entries) || $(newId).length) { return listItem(); }
+    entries[newId] = {
       name: '',
       quantity: '1',
-      price: '0.00'
-    }
+      price: '0.00',
+      filter: ''
+    };
     return $(
-      '<li class="list-item incomplete" id="' + newId + '">' +
+      '<li class="list-item" id="' + newId + '">' +
         '<span class="name"></span>' +
         '<div class="actions">' +
+          '<button class="adder pure-button">ADD</button>' +
           '<button class="finisher pure-button">GOT IT</button>' +
           '<button class="deleter pure-button">DELETE</button>' +
         '</div>' +
