@@ -39,63 +39,6 @@ body {
   opacity: .26;
 }
 
-.top-help {
-  position: fixed;
-  font-size: 1.5em;
-  margin: .5em;
-  z-index: 1;
-  cursor: pointer;
-}
-
-.instruct-help {
-  top: 1.5em;
-  left: .25em;
-}
-
-#instructions {
-  opacity: 0;
-  visibility: hidden;
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  text-align: center;
-  height: 100%;
-  line-height: 100vh;
-  background: rgba(0, 0, 0, .26);
-  z-index: 1;
-  transition: visibility 0s .5s linear, opacity .5s linear;
-
-  table {
-    max-width: 45em;
-    padding: 2em;
-    display: inline-block;
-    vertical-align: middle;
-    text-align: left;
-    line-height: 1em;
-    background: white;
-    border-radius: 2em;
-
-    caption {
-      font-size: 1.4em;
-      padding: .5em 0 1.5em 0;
-    }
-
-    td {
-      padding: .5em .75em;
-      border-top: 1px solid @gray-1;
-      border-bottom: 1px solid @gray-1;
-    }
-  }
-}
-
-#instruct-toggle:checked ~ #instructions {
-  opacity: 1;
-  visibility: visible;
-  transition-delay: 0s;
-}
-
 #the-list {
   position: absolute;
   top: 0;
@@ -104,7 +47,7 @@ body {
   padding: 6em 0 0 0;
   list-style: none;
   background: white;
-  transition: padding-top .4s .4s ease;
+  transition: all .4s .4s ease;
 }
 
 .list-item {
@@ -115,7 +58,7 @@ body {
   box-sizing: border-box;
   border-bottom: 1px solid @gray-1;
   overflow: hidden;
-  transition: color .5s ease;
+  transition: all .5s ease;
 
   .actions {
     position: absolute;
@@ -128,51 +71,69 @@ body {
     font-size: .6em;
     box-sizing: border-box;
     color: white;
-    transition: background .4s ease;
+    transition: all .4s ease;
 
     .pure-button {
-      position: relative;
-      margin: 0 1.5em;
-      transition: left .4s ease;
+      position: absolute;
+      width: 6em;
+      margin: 0 -3em;
+      transition: all .4s ease;
     }
 
-    .finisher {
+    .adder, .finisher {
       left: -75%;
     }
 
     .deleter {
-      left: 75%;
+      left: 175%;
+    }
+  }
+
+  &.incomplete {
+    .adder {
+      left: 50%;
+    }
+  }
+
+  &.finished {
+    color: @gray-1;
+  }
+
+  &.selected {
+    padding-left: 2em;
+
+    &::before {
+      content: '';
+      width: 3em;
+      height: 3em;
+      -webkit-transform: rotate(45deg);
+              transform: rotate(45deg);
+      position: absolute;
+      left: -2.25em;
+      top: -.25em;
+      background: @color-primary-0;
+      z-index: 1;
+    }
+
+    &:not(.incomplete) {
+      &>.actions {
+        background: rgba(0, 0, 0, .26);
+
+        .finisher {
+          left: 50%;
+          margin-left: -8em;
+        }
+        .deleter {
+          left: 50%;
+          margin-left: 2em;
+        }
+      }
     }
   }
 }
 
-.list-item.finished {
-  color: @gray-1;
-}
-
-.list-item.selected {
-  padding-left: 2em;
-}
-
-.list-item.selected::before {
-  content: '';
-  width: 3em;
-  height: 3em;
-  transform: rotate(45deg);
-  position: absolute;
-  left: -2.25em;
-  top: -.25em;
+.adder {
   background: @color-primary-0;
-  z-index: 1;
-}
-
-.list-item.selected:not(.incomplete)>.actions {
-  background: rgba(0, 0, 0, .26);
-
-  .pure-button {
-    left: 0;
-    right: 0;
-  }
 }
 
 .finisher {
@@ -189,12 +150,12 @@ body {
   height: 9em;
   width: 100%;
   text-align: center;
-  padding-top: 5.5em;
+  padding-top: 6.5em;
   position: fixed;
   left: -100%;
   background: white;
   border-bottom: 1px solid @gray-2;
-  transition: left .4s ease;
+  transition: all .4s ease;
 
   fieldset {
     display: inline-block;

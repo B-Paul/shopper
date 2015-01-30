@@ -1,21 +1,19 @@
 $(document).ready(function () {
   'use strict';
 
-  var bod, mode, entries, cursor, theList, fields, filterButton, hint;
+  var bod, mode, entries, cursor, theList, fields, hint;
 
   bod = $(document.body);
   mode = 'ready';
-    // possible modes: 'ready', 'typing', 'selecting', 'editing', 'filtering'
+    // possible modes: 'ready', 'typing', 'selecting', 'editing'
   entries = {};
   cursor = 0;
   theList = $('#the-list');
   fields = {
     name: $('#input-name'),
     quantity: $('#input-quantity'),
-    price: $('#input-price'),
-    filter: $('#input-filter')
+    price: $('#input-price')
   };
-  filterButton = $('.filter-help');
   hint = $('.hint');
 
   moveTo(0);
@@ -61,11 +59,6 @@ $(document).ready(function () {
       refreshView();
       return false;
     })
-    .on('click', '.filter-help', function () {
-      mode = 'filtering';
-      refreshView();
-      return false;
-    })
     // Capture keyboard commands
     .on('keydown', function (event) {
       switch (event.keyCode) {
@@ -103,11 +96,6 @@ $(document).ready(function () {
         $('.list-item.selected').toggleClass('finished');
         break;
 
-      case 191: // / (SLASH)
-        if (mode !== 'selecting') { return; }
-        mode = 'filtering';
-        break;
-
       default:
         return true; // If key pressed was a printable character, keypress
         // handler will take over from this point. 
@@ -127,7 +115,6 @@ $(document).ready(function () {
     .on('keyup', function () {
       var item = theList.children('.list-item').eq(cursor);
       item.find('.name').text(fields.name.val());
-      filterButton.text(fields.filter.val());
     });
 
   function move(direction) { // Positive is down, negative is up.
@@ -181,11 +168,6 @@ $(document).ready(function () {
 
     switch (mode) {
 
-    case 'filtering':
-      fields.filter.focus();
-      hint.text('type a search string to filter your shopping list');
-      break;
-
     case 'editing':
       bod.addClass('editor-open');
       hint.text('');
@@ -224,8 +206,7 @@ $(document).ready(function () {
     entries[newId] = {
       name: '',
       quantity: '1',
-      price: '0.00',
-      filter: ''
+      price: '0.00'
     };
     return $(
       '<li class="list-item" id="' + newId + '">' +
